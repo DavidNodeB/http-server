@@ -3,10 +3,10 @@
 
 int main() {
     WSADATA wsaData;
-    SOCKET clientSocket;
+    SOCKET clientSocket; 
     struct sockaddr_in serverAddr;
-    char *serverIP = "127.0.0.1"; 
-    int port = 5001;
+    char *serverIP = "127.0.0.1";
+    int port = 5001; 
 
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         printf("CLIENT_ERROR: %d\n", WSAGetLastError());
