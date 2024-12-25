@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    printf("SERVER: received message: %s\n", recvBuffer);
+    printf("%s\n", recvBuffer);
 
     // close and cleanup
     closesocket(clientSocket);
