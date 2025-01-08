@@ -2,20 +2,17 @@
 #include <winsock2.h>
 #include <string.h>
 #include <stdlib.h> 
+#include "socket.h"
 
 int main(int argc, char *argv[]) {
-    WSADATA wsaData;
     SOCKET serverSocket, clientSocket;
     struct sockaddr_in serverAddr, clientAddr;
-    WORD ws2Version = MAKEWORD(2, 2);
-    char *serverIP = "127.0.0.1"; // localhost
     int serverSize = sizeof(serverAddr); // size of serverAddr in bytes
     char *message = "Hello client from server";
     int messageLen = strlen(message);
     char recvBuffer[512];
     int clientSize = sizeof(clientAddr);
-    int port = 5001;
-    char *token, *method, *path, *version, *connection, *host, *acceptstr; 
+    char *token, *method, *path, *version, *connection, *host, *acceptStr; 
 
     if (WSAStartup(ws2Version, &wsaData) != 0) {
         printf("SERVER_ERROR: %d\n", WSAGetLastError());
@@ -69,41 +66,41 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    printf("%s\n", recvBuffer);
-
     token = strdup(recvBuffer); 
-    method = strtok(recvBuffer, " "); 
-    path = strtok(NULL, " "); 
-    version = strtok(NULL, " "); 
-    host = strstr(token, "Host: ");
-    acceptstr = strstr(token, "Accept: "); 
-    connection = strstr(token, "Connection: "); 
 
-    if (token != NULL) {
-        // skip over identifier
-        host += 6;
-        acceptstr += 8;
-        connection += 12; 
-        
-        // find the end of the line
-        char* hostend = strpbrk(host, " \r\n"); 
-        char* acceptend = strpbrk(acceptstr, ",");
-        char* connectionend = strpbrk(connection, " ");
-        
-        // terminate the line
-        *hostend = '\0'; 
-        *acceptend = '\0'; 
-        *connectionend = '\0';        
-    } 
-    
-    printf("%s\n", method); 
-    printf("%s\n", path); 
-    printf("%s\n", version); 
-    printf("%s\n", host); 
-    printf("%s\n", acceptstr); 
-    printf("%s\n", connection);  
+    if (token != NULL) 
+    {
+        method = strtok(token, " ");
+        path = strtok(NULL, " ");
+        version = strtok(NULL, "\n");
+        printf("Method: %s\n", method);
+        printf("Path: %s\n", path);
+        printf("Version: %s\n", version);
+    }
+
+    char *header = strtok(NULL, "\r\n"); 
+
+    while (header != NULL) {
+        if (strstr(header, "Host: ")) {
+            host = header + 6;
+            printf("Host: %s\n", host);
+        }
+
+        if (strstr(header, "Accept: ")) {
+            acceptStr = header + 8; 
+            printf("Accept: %s\n", acceptStr);
+        }
+
+        if (strstr(header, "Connection: ")) {
+            connection = header + 12;
+            printf("Connection: %s\n", connection);
+        }
+
+        header = strtok(NULL, "\r\n"); 
+    }
 
     // close and cleanup
+    free(token); 
     closesocket(clientSocket);
     closesocket(serverSocket);
     WSACleanup();
