@@ -4,7 +4,7 @@
 # How to download ⬇️
 1. Click on green code button dropdown
 2. Click download zip
-3. unzip files into folder
+3. Unzip files into folder
 # How to run 💻
 1. Double click on server.exe
 2. Open browser and paste ```localhost:5001```
