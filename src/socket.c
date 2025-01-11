@@ -54,12 +54,12 @@ int main(int argc, char *argv[]) {
 
     printf("SERVER: client accepted\n");
 
-    if (send(clientSocket, message, messageLen, 0) == SOCKET_ERROR) {
-        printf("SERVER_ERROR: %d\n", WSAGetLastError());
-        return 1;
-    }
+    // if (send(clientSocket, message, messageLen, 0) == SOCKET_ERROR) {
+    //     printf("SERVER_ERROR: %d\n", WSAGetLastError());
+    //     return 1;
+    // }
 
-    printf("SERVER: message sent\n");
+    // printf("SERVER: message sent\n");
 
     if (recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0) == SOCKET_ERROR) {
         printf("SERVER_ERROR: %d\n", WSAGetLastError());
@@ -98,6 +98,25 @@ int main(int argc, char *argv[]) {
 
         header = strtok(NULL, "\r\n"); 
     }
+
+    char* htmlResponse;
+
+    if (strstr(path, "/")) {
+        htmlResponse = "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "Connection: close\r\n\r\n"
+            "<html>\r\n"
+            "<head><title>Home Page</title></head>\r\n"
+            "<body><h1>Welcome to the Home Page!</h1></body>\r\n"
+            "</html>\r\n";
+    }
+
+    if (send(clientSocket, htmlResponse, strlen(htmlResponse), 0) == SOCKET_ERROR) {
+        printf("SERVER_ERROR: %d\n", WSAGetLastError());
+        return 1;
+    }
+
+    printf("SERVER: HTML response sent\n");
 
     // close and cleanup
     free(token); 
